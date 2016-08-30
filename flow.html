@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Bitmovin Player Comparison</title>
+  <link href="//releases.flowplayer.org/6.0.5/skin/all-skins.css" rel="stylesheet">
+  <script type="text/javascript" src="//releases.flowplayer.org/6.0.5/flowplayer.min.js"></script>
+</head>
+<body>
+  <div class="header">
+    <h2 class="line-up">Bitmovin Player Comparison</h2>
+  </div>
+  <div id='container' class='flowplayer functional'>
+
+    <!--Video content comes here-->
+
+  </div>
+  <div id='result-view'>
+
+    <!--Player results come here-->
+
+  </div>
+  <script type="text/javascript">
+
+    var once = true;
+    var startTime;
+    var measureStartTime = false;
+    var initTime = new Date().getTime();
+
+    var container = document.getElementById("container");
+
+    flowplayer(function(api, root) {
+      api.bind('ready', function() {
+        var loadTime = new Date().getTime() - initTime;
+        console.log("Ready in " + loadTime + " ms");
+        flowplayer().play();
+      });
+      api.bind('resume', function() {
+        measureStartTime = true;
+        startTime = new Date().getTime();
+      });
+      api.bind('progress', function() {
+        if(measureStartTime) {
+          var loadTime = new Date().getTime() - startTime;
+          var overallTime = new Date().getTime() - initTime;
+          console.log("Start playing after " + loadTime + "ms (overall: " + overallTime + "ms)");
+          measureStartTime = false;
+        }
+      });
+    });
+
+    flowplayer(container, {
+
+      clip: {
+        sources: [
+          {
+            type: "application/mpeg-xml",
+            src: "//bitdash-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd"
+          }, {
+            type: "application/x-mpegurl",
+            src: "http://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8"
+          }
+
+        ]
+      },
+      debug: "false",
+      poster: "http://bitdash-a.akamaihd.net/content/MI201109210084_1/poster.jpg"
+    });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Bitmovin Player Comparison</title>
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/shaka-player/1.6.5/shaka-player.compiled.js"></script>
+</head>
+<body>
+  <div class="header">
+    <h2 class="line-up">Bitmovin Player Comparison</h2>
+  </div>
+  <video id='container' class='container' autoplay controls>
+
+    <!--Video content comes here-->
+
+  </video>
+  <div id='result-view'>
+
+    <!--Player results come here-->
+
+  </div>
+  <script type="text/javascript">
+
+    var once = true;
+    var startTime;
+    var measureStartTime = false;
+    var initTime = new Date().getTime();
+
+    shaka.polyfill.installAll();
+
+    if (shaka.player.Player.isBrowserSupported()) {
+
+      var video = document.getElementById('container');
+
+      var player = new shaka.player.Player(video);
+      var videoSource = new shaka.player.DashVideoSource(
+              'http://bitdash-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd',
+              null /* interpretContentProtection */,
+              null /* estimator */,
+              null /* abrManager */);
+
+      player.load(videoSource);
+
+      video.addEventListener('canplay', function() {
+        var loadTime = new Date().getTime() - initTime;
+        console.log("Ready in " + loadTime + " ms");
+      });
+      video.addEventListener('play', function() {
+        measureStartTime = true;
+        startTime = new Date().getTime();
+      });
+      video.addEventListener('timeupdate', function() {
+        if(measureStartTime) {
+          var loadTime = new Date().getTime() - startTime;
+          var overallTime = new Date().getTime() - initTime;
+          console.log("Start playing after " + loadTime + "ms (overall: " + overallTime + "ms)");
+          measureStartTime = false;
+        }
+      });
+    }
+    else {
+
+      console.error('Browser not supported!');
+    }
+
+  </script>
+</body>
+</html>

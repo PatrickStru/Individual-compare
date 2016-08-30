@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Bitmovin Player Comparison</title>
+  <script type="text/javascript" src="https://cdn.jsdelivr.net/hls.js/latest/hls.min.js"></script>
+</head>
+<body>
+  <div class="header">
+    <h2 class="line-up">Bitmovin Player Comparison</h2>
+  </div>
+  <video id='container' class='container' controls>
+
+    <!--Video content comes here-->
+
+  </video>
+  <div id='result-view'>
+
+    <!--Player results come here-->
+
+  </div>
+  <script type="text/javascript">
+
+    var startTime;
+    var measureStartTime = false;
+    var initTime = new Date().getTime();
+
+    if (Hls.isSupported()) {
+      var video = document.getElementById('container');
+      var config = {
+        debug: false
+      };
+      var hls = new Hls(config);
+      hls.attachMedia(video);
+
+      // MEDIA_ATTACHED event is fired by hls object once MediaSource is ready
+      hls.on(Hls.Events.MEDIA_ATTACHED, function (event, data) {
+        var loadTime = new Date().getTime() - initTime;
+        hls.loadSource('http://www.streambox.fr/playlists/x36xhzz/x36xhzz.m3u8');
+        console.log("Ready in " + loadTime + " ms");
+        video.play();
+      });
+
+      video.addEventListener("play", function (event) {
+        startTime = new Date().getTime();
+        measureStartTime = true;
+      });
+
+      video.addEventListener("timeupdate", function () {
+        if (measureStartTime) {
+          var loadTime = new Date().getTime() - startTime;
+          var overallTime = new Date().getTime() - initTime;
+          console.log("Start playing after " + loadTime + "ms (overall: " + overallTime + " ms)");
+          measureStartTime = false;
+        }
+
+      });
+    }
+
+  </script>
+</body>
+</html>

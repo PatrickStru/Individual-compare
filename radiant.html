@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Bitmovin Player Comparison</title>
+  <script type="text/javascript" src="https://cdn.radiantmediatechs.com/rmp/3.4.5/js/rmp.min.js"></script>
+</head>
+<body>
+  <div class="header">
+    <h2 class="line-up">Bitmovin Player Comparison</h2>
+  </div>
+  <div id='container' class='container'>
+
+    <!--Video content comes here-->
+
+  </div>
+  <div id='result-view'>
+
+    <!--Player results come here-->
+
+  </div>
+  <script type="text/javascript">
+
+    var startTime = 0;
+    var initTime = new Date().getTime();
+    var measureStartTime = false;
+
+    var settings = {
+      licenseKey: 'Y2llZ2lvcWNxbSEqXyUrZ2M9eXZ6Mmt2Nz9yb201ZGFzaXMzMGRiMEElXyo=',
+      bitrates: {
+        //dash:   "//bitdash-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd"
+        hls:  "//bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8"
+      },
+      poster: '//bitdash-a.akamaihd.net/content/MI201109210084_1/poster.jpg',
+      autoplay: true
+    };
+    // Reference to the wrapper div (unique id)
+    var element = 'container';
+
+    // Create an object based on RadiantMP constructor
+    var rmp = new RadiantMP(element);
+    var rmpContainer = document.getElementById(element);
+
+    rmpContainer.addEventListener('ready', function(event) {
+      var loadTime = new Date().getTime() - initTime;
+      console.log("Ready: " + loadTime);
+    });
+    rmpContainer.addEventListener('play', function() {
+      measureStartTime = true;
+      startTime = new Date().getTime();
+    });
+    rmpContainer.addEventListener('timeupdate', function() {
+      if(measureStartTime) {
+        var loadTime = new Date().getTime() - startTime;
+        var overallTime = new Date().getTime() - initTime;
+        console.log("Start playing after " + loadTime + "ms (overall: " + overallTime + " ms)");
+        measureStartTime = false;
+      }
+    });
+
+    rmp.init(settings);
+
+  </script>
+</body>
+</html>

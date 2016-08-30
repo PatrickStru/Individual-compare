@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Bitmovin Player Comparison</title>
+  <script type="text/javascript" src="https://content.jwplatform.com/libraries/o1xUkYkW.js"></script>
+</head>
+<body>
+  <div class="header">
+    <h2 class="line-up">Bitmovin Player Comparison</h2>
+  </div>
+  <div id='container' class='container'>
+
+    <!--Video content comes here-->
+
+  </div>
+  <div id='result-view'>
+
+    <!--Player results come here-->
+
+  </div>
+  <script type="text/javascript">
+
+    var startTime;
+    var measureStartTime = false;
+    var initTime = new Date().getTime();
+
+    var player = jwplayer('container');
+    player.setup({
+      file: "//bitdash-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd",
+      image: "//bitdash-a.akamaihd.net/content/MI201109210084_1/poster.jpg",
+      autostart: true
+    });
+
+    player.on('ready', function(event) {
+      var loadTime = event.setupTime;
+      console.log("Ready in " + loadTime + " ms");
+    });
+
+    player.on('play', function(event) {
+      startTime = new Date().getTime();
+      measureStartTime = true;
+    });
+
+    player.on('time', function(event) {
+      if(measureStartTime) {
+        var loadTime = new Date().getTime() - startTime;
+        var overallTime = new Date().getTime() - initTime;
+        console.log("Start playing after " + loadTime + "ms (overall: " + overallTime + " ms)");
+        measureStartTime = false;
+      }
+    });
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Bitmovin Player Comparison</title>
+  <script type="text/javascript" src="http://cdn.dashjs.org/latest/dash.all.min.js"></script>
+</head>
+<body>
+  <div class="header">
+    <h2 class="line-up">Bitmovin Player Comparison</h2>
+  </div>
+  <video id='container' class='container' controls>
+
+    <!--Video content comes here-->
+
+  </video>
+  <div id='result-view'>
+
+    <!--Player results come here-->
+
+  </div>
+  <script type="text/javascript">
+
+    var initTime = new Date().getTime();
+    var startTime = 0;
+    var measureStartTime = false;
+
+    var url = "//bitdash-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd";
+
+    var player = dashjs.MediaPlayer().create();
+
+    player.on('streaminitialized', function(event) {
+      var eventTime = new Date(event.streamInfo.manifestInfo.loadedTime).getTime();
+      var loadTime = eventTime - initTime;
+      console.log("Ready in " + loadTime + " ms");
+    }, this);
+
+    player.on("playbackStarted", function() {
+      startTime = new Date().getTime();
+      measureStartTime = true;
+    }, this);
+
+    player.on("playbackTimeUpdated", function() {
+      if(measureStartTime) {
+        var eventTime = new Date().getTime();
+        var loadTime = eventTime - startTime;
+        var overallTime = eventTime - initTime;
+        console.log("Start playing after " + loadTime + "ms (overall: " + overallTime + " ms)");
+        measureStartTime = false;
+      }
+    }, this);
+
+    player.initialize(document.getElementById("container"), url, true);
+
+  </script>
+</body>
+</html>

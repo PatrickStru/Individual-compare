@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>Bitmovin Player Comparison</title>
+  <script type="text/javascript" src="https://bitmovin-a.akamaihd.net/bitmovin-player/stable/5/bitdash.min.js"></script>
+</head>
+<body>
+  <div class="header">
+    <h2 class="line-up">Bitmovin Player Comparison</h2>
+  </div>
+  <div id='container' class='container'>
+
+    <!--Video content comes here-->
+
+  </div>
+  <div id='result-view'>
+
+    <!--Player results come here-->
+
+  </div>
+  <script type="text/javascript">
+
+    var startTime = 0;
+    var initTime = new Date().getTime();
+        var measureStartTime = false; 
+
+        var player = bitdash('container');
+
+        var conf = {
+            key:       "ace1fa0a-968f-4839-9470-4a25aac55b15",
+            source: {
+                //dash:        "//bitdash-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd",
+                hls:         "//bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8",
+                //progressive: "//bitdash-a.akamaihd.net/content/MI201109210084_1/MI201109210084_mpeg-4_hd_high_1080p25_10mbits.mp4",
+                poster:      "//bitdash-a.akamaihd.net/content/MI201109210084_1/poster.jpg"
+            }, 
+            playback : {
+                autoplay: true
+            },
+            events: {
+                onReady: function(data) {
+                    var loadTime = data.timestamp - initTime;
+                    console.log("Ready in: " + loadTime);
+                },
+                onPlay: function(data) {
+                    //$j(resultView).append(playerName.BITMOVIN + ": Press play<br>");
+                    measureStartTime = true;
+                    startTime = data.timestamp;
+                },
+                onTimeChanged: function(data) {
+                    if(measureStartTime) {
+                        var loadTime = data.timestamp - startTime;
+                        var overallTime = data.timestamp - initTime;
+						console.log("Start playing after " + loadTime + "ms (overall: " + overallTime + " ms)")
+                        measureStartTime = false;
+                    }
+                }
+            }
+        };
+        player.setup(conf);
+
+  </script>
+</body>
+</html>
