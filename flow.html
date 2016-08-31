@@ -5,6 +5,7 @@
   <title>Bitmovin Player Comparison</title>
   <link href="//releases.flowplayer.org/6.0.5/skin/all-skins.css" rel="stylesheet">
   <script type="text/javascript" src="//releases.flowplayer.org/6.0.5/flowplayer.min.js"></script>
+  <script src="//releases.flowplayer.org/dashjs/flowplayer.dashjs.min.js"></script>
 </head>
 <body>
   <div class="header">
@@ -30,6 +31,7 @@
     var container = document.getElementById("container");
 
     flowplayer(function(api, root) {
+
       api.bind('ready', function() {
         var loadTime = new Date().getTime() - initTime;
         console.log("Ready in " + loadTime + " ms");
@@ -39,7 +41,7 @@
         measureStartTime = true;
         startTime = new Date().getTime();
       });
-      api.bind('progress', function() {
+      api.on('progress', function() {
         if(measureStartTime) {
           var loadTime = new Date().getTime() - startTime;
           var overallTime = new Date().getTime() - initTime;
@@ -54,13 +56,13 @@
       clip: {
         sources: [
           {
-            type: "application/mpeg-xml",
+            type: "application/dash+xml",
+            dashCodecs: "avc1.42c01e,mp4a.40.5",
             src: "//bitdash-a.akamaihd.net/content/MI201109210084_1/mpds/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.mpd"
           }, {
             type: "application/x-mpegurl",
-            src: "http://bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8"
+            src:  "//bitdash-a.akamaihd.net/content/MI201109210084_1/m3u8s/f08e80da-bf1d-4e3d-8899-f0f6155f6efa.m3u8"
           }
-
         ]
       },
       debug: "false",
